@@ -1,5 +1,10 @@
 packages:
-  - .
+  - apps/*
+  - packages/*
+
+catalog:
+  vite-plus: 1.4.0
+  "@types/node": 24.10.1
 
 onlyBuiltDependencies:
   - esbuild

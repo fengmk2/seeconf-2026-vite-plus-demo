@@ -1,0 +1,65 @@
+diff --git a/package.json b/package.json
+index f8aaed2..878d193 100644
+--- a/package.json
++++ b/package.json
+@@ -3,13 +3,6 @@
+   "version": "1.0.0",
+   "private": true,
+   "type": "module",
+-  "scripts": {
+-    "dev": "vp dev",
+-    "check": "vp fmt --check && vp lint",
+-    "test": "vp test run",
+-    "build": "vp build",
+-    "verify": "vp fmt --check && vp lint && vp test run && vp build"
+-  },
+   "devDependencies": {
+     "@types/node": "24.10.1",
+     "vite": "catalog:",
+diff --git a/tsconfig.json b/tsconfig.json
+index f04aae6..6ed1f28 100644
+--- a/tsconfig.json
++++ b/tsconfig.json
+@@ -10,5 +10,5 @@
+     "skipLibCheck": true,
+     "allowImportingTsExtensions": true
+   },
+-  "include": ["src", "vite.config.ts", "vitest.config.ts"]
++  "include": ["src", "vite.config.ts"]
+ }
+diff --git a/vite.config.ts b/vite.config.ts
+index 9d5b112..24d124a 100644
+--- a/vite.config.ts
++++ b/vite.config.ts
+@@ -23,6 +23,17 @@ export default defineConfig({
+       },
+     ],
+   },
++  test: {
++    include: ["src/**/*.test.ts"],
++    environment: "node",
++  },
++  run: {
++    tasks: {
++      verify: {
++        command: "vp check && vp test && vp build",
++      },
++    },
++  },
+   server: {
+     host: "127.0.0.1",
+     port: 6518,
+diff --git a/vitest.config.ts b/vitest.config.ts
+deleted file mode 100644
+index eac5991..0000000
+--- a/vitest.config.ts
++++ /dev/null
+@@ -1,8 +0,0 @@
+-import { defineConfig } from "vite-plus";
+-
+-export default defineConfig({
+-  test: {
+-    include: ["src/**/*.test.ts"],
+-    environment: "node",
+-  },
+-});

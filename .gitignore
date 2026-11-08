@@ -3,6 +3,7 @@ dist/
 coverage/
 .vite/
 .vite-plus/
+.demo/
 .DS_Store
 *.log
 .env
