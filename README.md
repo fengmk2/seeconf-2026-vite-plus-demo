@@ -80,6 +80,6 @@ node scripts/config-demo.mjs diff
 
 ## 版本与原视频
 
-主 workspace 固定 Node.js `24.22.1`、pnpm `10.33.0`、Vite+ `1.4.0`，锁文件中的 Vitest 为 `5.0.5`。迁移前参考项目使用独立的 Vite `8.3.5`、Vitest `5.0.5`、Oxlint `1.89.0`、Oxfmt `0.74.0`。
+主 workspace 固定 Node.js `24.22.1`、pnpm `12.21.0`、Vite+ `1.4.0`，锁文件中的 Vitest 为 `5.0.5`。迁移前参考项目使用独立的 Vite `8.3.5`、Vitest `5.0.5`、Oxlint `1.89.0`、Oxfmt `0.74.0`。
 
 原 60 秒视频录制时使用两个独立项目和全局 `vp` `1.5.0`；本仓库现已整理为 monorepo，相同流程均从根目录执行，视频尚未重录。视频使用真实命令输出和页面画面剪辑，显示耗时仅属于当次运行。

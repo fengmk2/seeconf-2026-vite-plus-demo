@@ -87,12 +87,12 @@ node scripts/config-demo.mjs diff
 
 演示副本位于 `~/.cache/seeconf-vite-plus-demo/<path-hash>/config-consolidation`；使用 `path` 命令获取本次路径。外部目录使参考案例能够使用自己的依赖和配置，而不被主 workspace 接管。
 
-脚本会读取演示副本中的 `.node-version` 和 `package.json.packageManager`，通过 `vp env exec` 显式指定所有工具链子进程使用的版本。即使在仓库根目录启动脚本的 Node.js 版本不同，安装、迁移和验证仍使用案例声明的 Node.js `24.22.1` 与 pnpm `10.33.0`。
+脚本会读取演示副本中的 `.node-version` 和 `package.json.packageManager`，通过 `vp env exec` 显式指定所有工具链子进程使用的版本。即使在仓库根目录启动脚本的 Node.js 版本不同，安装、迁移和验证仍使用案例声明的 Node.js `24.22.1` 与 pnpm `12.21.0`。
 
 迁移步骤在演示副本中实际执行以下命令，固定运行环境与迁移器版本，并跳过 Agent、编辑器与 Git hooks 设置：
 
 ```sh
-vp env exec --node 24.22.1 --package-manager pnpm@10.33.0 \
+vp env exec --node 24.22.1 --package-manager pnpm@12.21.0 \
   vp exec pnpm dlx --package=vite-plus@1.4.0 \
   vp migrate --no-interactive --no-agent --no-editor --no-hooks
 ```

@@ -29,7 +29,7 @@
 vp env current
 ```
 
-打开根目录 `.node-version`、`package.json` 和 `pnpm-workspace.yaml`，指出 Node.js `24.22.1`、pnpm `10.33.0` 和 catalog 中的 Vite+ `1.4.0`。
+打开根目录 `.node-version`、`package.json` 和 `pnpm-workspace.yaml`，指出 Node.js `24.22.1`、pnpm `12.21.0` 和 catalog 中的 Vite+ `1.4.0`。
 
 应用 `@seeconf/agenda-web` 通过 `workspace:*` 引用 `@seeconf/favorites`。收藏逻辑只有一份，位于 `packages/favorites-lib/src/index.ts`；应用开发时直接使用源码，无需先运行 `vp pack`。
 

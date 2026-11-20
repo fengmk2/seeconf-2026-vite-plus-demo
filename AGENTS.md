@@ -2,7 +2,7 @@
 
 Run normal development commands from the repository root. The main pnpm workspace contains `apps/agenda-web` (`@seeconf/agenda-web`) and `packages/favorites-lib` (`@seeconf/favorites`). The app depends on the library through `workspace:*` and uses its TypeScript source export. Do not duplicate the library logic in the app or require a library build before starting development.
 
-The root owns `.node-version`, `package.json`, `pnpm-workspace.yaml` and `pnpm-lock.yaml`. Preserve the declared Node.js 24.22.1, pnpm 10.33.0 and catalog-pinned Vite+ 1.4.0 unless a dependency change is requested. Run `vp install --frozen-lockfile` before making changes.
+The root owns `.node-version`, `package.json`, `pnpm-workspace.yaml` and `pnpm-lock.yaml`. Preserve the declared Node.js 24.22.1, pnpm 12.21.0 and catalog-pinned Vite+ 1.4.0 unless a dependency change is requested. Run `vp install --frozen-lockfile` before making changes.
 
 The root `vite.config.ts` owns shared format, lint, test and task settings, and selects the default application/library targets. The app config owns its development server at http://127.0.0.1:6517. The library config owns its pack entry and declaration settings.
 
