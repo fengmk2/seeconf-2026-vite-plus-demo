@@ -40,13 +40,13 @@ vp build
 vp pack
 ```
 
-预期 14 个测试通过，应用产物位于 `apps/agenda-web/dist/`，库产物为 `packages/favorites-lib/dist/index.mjs` 与 `index.d.mts`。可直接导入构建后的库验证行为：
+预期 14 个测试通过，应用产物位于 `apps/agenda-web/dist/`，库产物为 `packages/favorites-lib/dist/index.mjs` 与 `index.d.mts`。要验证其他项目能否导入打包后的库，在根目录执行：
 
 ```sh
-vp exec node --input-type=module --eval 'import { toggleFavorite } from "./packages/favorites-lib/dist/index.mjs"; console.log(toggleFavorite([], "toolchain", ["toolchain"]));'
+vp run smoke-lib
 ```
 
-预期输出 `{ ids: [ 'toolchain' ], status: 'added' }`。
+`smoke-lib` 在 `dependsOn` 中声明了 `pack-lib`。Vite+ 先运行 `vp pack`，再让 Node.js 从 `dist/index.mjs` 导入并调用 `toggleFavorite`。验证通过后输出 `{ ids: [ 'toolchain' ], status: 'added' }`。
 
 ## 一份共享配置，一个验证入口
 
@@ -58,7 +58,7 @@ vp run verify
 vp run --last-details
 ```
 
-`verify` 串联检查、测试、应用构建和库打包。输入与执行条件未变化时，可以复用任务缓存；查看执行详情确认本次是否命中。
+`verify` 先构建应用、打包库，再做静态检查和测试。Vite+ 自动追踪各命令读取的输入和写出的产物。输入和执行条件相同时，命中缓存会回放输出，并能还原缺失的构建产物。本例无需配置 `cache.input` 或 `cache.output`。
 
 ## 配置迁移：四份文件到一份
 
@@ -80,6 +80,6 @@ node scripts/config-demo.mjs diff
 
 ## 版本与原视频
 
-主 workspace 固定 Node.js `24.22.1`、pnpm `12.21.0`、Vite+ `1.4.0`，锁文件中的 Vitest 为 `5.0.5`。迁移前参考项目使用独立的 Vite `8.3.5`、Vitest `5.0.5`、Oxlint `1.89.0`、Oxfmt `0.74.0`。
+主 workspace 固定 Node.js `24.22.1`、pnpm `12.21.0`、Vite+ `1.7.0`，锁文件中的 Vitest 为 `5.1.0`。迁移前参考项目使用独立的 Vite `8.3.5`、Vitest `5.0.5`、Oxlint `1.89.0`、Oxfmt `0.74.0`。
 
 原 60 秒视频录制时使用两个独立项目和全局 `vp` `1.5.0`；本仓库现已整理为 monorepo，相同流程均从根目录执行，视频尚未重录。视频使用真实命令输出和页面画面剪辑，显示耗时仅属于当次运行。

@@ -29,7 +29,7 @@
 vp env current
 ```
 
-打开根目录 `.node-version`、`package.json` 和 `pnpm-workspace.yaml`，指出 Node.js `24.22.1`、pnpm `12.21.0` 和 catalog 中的 Vite+ `1.4.0`。
+打开根目录 `.node-version`、`package.json` 和 `pnpm-workspace.yaml`，指出 Node.js `24.22.1`、pnpm `12.21.0` 和 catalog 中的 Vite+ `1.7.0`。
 
 应用 `@seeconf/agenda-web` 通过 `workspace:*` 引用 `@seeconf/favorites`。收藏逻辑只有一份，位于 `packages/favorites-lib/src/index.ts`；应用开发时直接使用源码，无需先运行 `vp pack`。
 
@@ -91,9 +91,11 @@ vp run verify
 vp run --last-details
 ```
 
-根配置中的 `verify` 串联 `vp check`、`vp test`、`vp build` 与 `vp pack`。在输入和相关执行条件没有变化时，再次运行可以复用任务缓存；查看执行详情确认是否命中及原因。修改共享库后重新验证，观察输入变化如何影响执行。实际耗时取决于机器、项目与缓存状态。
+根配置中的 `verify` 先运行 `vp build` 和 `vp pack`，再运行 `vp check` 和 `vp test`。这样检查和测试第一次扫描 workspace 时，生成目录已经存在。在输入和相关执行条件没有变化时，再次运行可以复用任务缓存；查看执行详情确认是否命中及原因。第三次只改 `apps/agenda-web/index.html` 的标题。应用构建和静态检查重新执行，库打包和业务测试命中缓存。实际耗时取决于机器、项目与缓存状态。
 
-任务保留自动输入追踪，并从缓存输入中排除生成的 `dist/`，避免打包时读取旧产物导致缓存失效；`dist/` 仍作为输出被追踪，源文件变化仍参与缓存判断。
+要单独观察任务依赖，运行 `vp run smoke-lib`。`dependsOn: ["pack-lib"]` 让 Vite+ 先打包共享库，再运行 `node scripts/smoke-lib.mjs`。脚本导入 `dist/index.mjs`，断言一次收藏操作的结果。
+
+`vp run` 自动追踪命令读写的文件。打包任务自己写出了 `dist/` 中的全部文件，所以即使工具先读取目录来清理旧产物，也无需手动配置 `cache.input` 排除 `dist/`。[自动追踪文档](https://viteplus.dev/guide/automatic-data-tracking)
 
 ## 录制说明
 

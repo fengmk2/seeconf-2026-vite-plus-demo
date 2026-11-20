@@ -24,9 +24,14 @@ export default defineConfig({
   run: {
     tasks: {
       verify: {
-        command: "vp check && vp test && vp build && vp pack",
-        // Pack reads previous outputs while cleaning. Track source inputs, not generated files.
-        cache: { input: [{ auto: true }, "!**/dist/**"] },
+        command: "vp build && vp pack && vp check && vp test",
+      },
+      "pack-lib": {
+        command: "vp pack",
+      },
+      "smoke-lib": {
+        dependsOn: ["pack-lib"],
+        command: "node scripts/smoke-lib.mjs",
       },
     },
   },
