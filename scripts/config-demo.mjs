@@ -120,9 +120,7 @@ try {
       run("vp", ["fmt"]);
       showConfigs();
     } else if (command === "finish") {
-      console.log(
-        "应用这份示例专用的人工整理补丁：合并 test，迁移 verify 任务。\n这是已写好的补丁，不是 Agent 现场生成的代码。",
-      );
+      console.log("回放已审阅的示例补丁：合并 test，迁移 verify 任务。");
       run("git", ["apply", "--check", patch]);
       run("git", ["apply", patch]);
       showConfigs();

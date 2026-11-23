@@ -56,9 +56,9 @@ vp run --last-details
 
 ## 配置迁移：四份文件到一份
 
-另一个演示用单项目参考案例展示配置合并：`vp migrate` 自动合并 Oxlint、Oxfmt 配置，四份工具配置变为两份；随后用明确标注的人工补丁，完成测试配置和验证任务的整理。
+单项目示例从四份工具配置开始。`vp migrate` 先合并 Oxlint、Oxfmt 配置，再由你的 AI Agent 把 Vitest 的 `test` 区块并入 `vite.config.ts`。Agent 跑检查、测试和构建，维护者审查配置与结果。[Agent 操作步骤与提示词](docs/unified-config.md#让-agent-合并测试配置)
 
-在仓库根目录运行：
+要回放已审阅的示例补丁，在仓库根目录运行：
 
 ```sh
 node scripts/config-demo.mjs prepare

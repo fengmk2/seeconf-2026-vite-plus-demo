@@ -24,9 +24,9 @@ Vite+ 将工具链配置集中到 `vite.config.ts`：保留 Vite 的 `server`、
 
 1. [迁移前项目](../config-consolidation/before/)：四份工具配置分别管理，使用独立安装的 Vite、Vitest、Oxlint、Oxfmt。
 2. `vp migrate` 执行后的演示副本：自动合并两份 JSON 配置，剩下 `vite.config.ts` 和 `vitest.config.ts`。
-3. [完整整理后的项目](../config-consolidation/after/)：通过人工审阅的补丁完成测试配置与任务的合并，只保留一份工具配置。
+3. 在迁移副本中让 AI Agent 将 Vitest 的 `test` 区块并入 `vite.config.ts`，运行验证，维护者审查 diff。此时四份工具配置已合为一份。
 
-**四份 → 两份，是本例中真实迁移命令的自动结果；两份 → 一份，是随后明确展示的人工整理。**
+[仓库中的最终示例](../config-consolidation/after/)还把验证脚本整理为任务，方便回放和下一段演示。
 
 ## 自动迁移做了什么
 
@@ -36,11 +36,28 @@ Vite+ 将工具链配置集中到 `vite.config.ts`：保留 Vite 的 `server`、
 
 在这个固定版本和项目中，`vitest.config.ts` 仍然存在，`verify` 仍然是 `package.json` 中的脚本。它们不会因为上述自动迁移而自行进入 `vite.config.ts`。
 
-## 人工整理做了什么
+## 让 Agent 合并测试配置
 
-`finish.patch` 是预先审阅的示例专用补丁，`finish` 命令只负责应用它，不调用 AI，也不属于 `vp migrate`。
+先在仓库根目录运行以下命令。脚本为这个小项目准备独立副本，记录迁移前的测试结果，再执行迁移。
 
-补丁把已有的 `test.include` 与 `test.environment` 移入 `vite.config.ts`，删除独立的 `vitest.config.ts` 并清理 `tsconfig.json` 对它的引用；同时删除仅转发内置命令的脚本，将验证流程放到 `run.tasks.verify`：
+```sh
+node scripts/config-demo.mjs prepare
+node scripts/config-demo.mjs before
+node scripts/config-demo.mjs migrate
+node scripts/config-demo.mjs path
+```
+
+在最后一条命令输出的目录打开你自己的 AI Agent，给它这个任务：
+
+> 读取 `vitest.config.ts` 和 `vite.config.ts`。把原有的 `test` 配置合入后者，保留 `include: ["src/**/*.test.ts"]` 和 `environment: "node"`。删除旧的 Vitest 配置文件，清理 `tsconfig.json` 中对应的引用。保留现有的 lint、格式、开发服务器和构建配置，保持业务代码和测试用例不变。运行 `vp check`、`vp test`、`vp build`，把配置 diff 和三条命令的实际结果交给我审查。
+
+维护者核对两处：新配置是否完整保留了测试匹配范围和 Node 环境，迁移前通过的 14 个测试是否仍全部通过。结合检查与构建的退出状态，决定是否接受这份改动。
+
+## 用已审阅的补丁回放
+
+需要稳定重播时，从一份刚执行完 `migrate` 的副本运行 `finish`。它通过 `git apply` 回放仓库内的 `finish.patch`。已经让 Agent 改过的副本可以直接审查，无需再应用这份补丁。
+
+回放的完整示例也会删除只转发内置命令的脚本，将验证流程放到 `run.tasks.verify`：
 
 ```ts
 run: {
@@ -56,7 +73,7 @@ run: {
 
 原有业务逻辑和 14 个测试断言保持一致，检查、测试和构建继续运行；集中配置可以减少查找和重复维护的工作。
 
-## 完整复现步骤
+## 补丁回放的完整步骤
 
 先按[仓库首页](../README.md)安装全局 `vp`。以下命令均在仓库根目录运行，脚本会在外部副本中执行实际工具命令：
 
@@ -81,7 +98,7 @@ node scripts/config-demo.mjs diff
 | `before`  | 按原锁文件安装依赖并运行原有 `verify` 脚本，确认迁移前就能检查、通过 14 个测试并构建。                    |
 | `migrate` | 运行固定版本的真实迁移器，再格式化生成的配置。安装依赖需要网络，首次运行耗时因环境而异。                  |
 | `show`    | 查看当前配置文件，分别观察四份、两份、一份三个状态。                                                      |
-| `finish`  | 应用已审阅的人工整理补丁，完成测试与任务配置的合并。                                                      |
+| `finish`  | 回放已审阅的示例补丁，完成测试与任务配置的合并。                                                          |
 | `verify`  | 运行 `vp check`、`vp test`、`vp build`，验证完成后的项目。                                                |
 | `diff`    | 对照最初索引查看全部变更的统计，以及工具配置、`package.json`、`tsconfig.json` 的详细 diff。               |
 
@@ -107,7 +124,7 @@ vp env exec --node 24.22.1 --package-manager pnpm@12.21.0 \
 | ----------- | --------------------------------- | ------------------------------------------------------------------------------------------------- |
 | 05:05–05:20 | `before` 的四份配置及验证脚本     | “命令选好了，配置还散落在几个文件里。人要找，Agent 也要找。”                                      |
 | 05:20–05:45 | 真实迁移后的文件与 diff           | “`vp migrate` 把 lint 和格式配置收进来，原来的规则保留。现在还有单独的测试配置。”                 |
-| 05:45–06:10 | 人工补丁及最终 `vite.config.ts`   | “这一步是审阅后的人工整理：合并测试，把验证流程定义成任务。并不是迁移器自动做完了一切。”          |
+| 05:45–06:10 | Agent 的配置 diff 及验证结果      | “剩下的测试配置交给 Agent。它保留测试范围和 Node 环境，跑完验证，我们审查 diff。”                 |
 | 06:10–06:25 | 14 个测试通过、构建成功的实际输出 | “配置入口集中起来，原有行为继续验证。接下来用一分钟看看这些命令怎样跑完一个 Web 项目的日常流程。” |
 
 **06:25–07:25** 播放现有 60 秒常用命令短片，随后讲依赖升级，到 **08:00** 进入 `vp run`。这段替换原工具链介绍中的部分讲述，总分享仍为 25 分钟。
