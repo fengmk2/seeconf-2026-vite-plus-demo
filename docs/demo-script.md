@@ -91,7 +91,7 @@ vp run verify
 vp run --last-details
 ```
 
-打开根 `vite.config.ts`，指出 `verify` 声明了 `dependsOn: ["pack-lib"]`。一次 `vp run verify` 会先执行前置任务 `vp pack`，成功后再依次执行 `vp build`、`vp check` 和 `vp test`。
+打开根 `vite.config.ts`，指出 `verify` 声明了 `dependsOn: ["packLib"]`。一次 `vp run verify` 会先执行前置任务 `vp pack`，成功后再依次执行 `vp build`、`vp check` 和 `vp test`。
 
 第一次运行后，原样再跑一次，观察四个步骤的缓存命中。第三次只改 `apps/agenda-web/index.html` 的标题，再运行 `vp run verify`。`vp run --last-details` 会列出各步骤的结果：应用构建和代码检查重跑，库打包和业务测试命中。
 

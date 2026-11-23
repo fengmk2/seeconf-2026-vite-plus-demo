@@ -6,7 +6,7 @@ The root owns `.node-version`, `package.json`, `pnpm-workspace.yaml` and `pnpm-l
 
 The root `vite.config.ts` owns shared format, lint, test and task settings, and selects the default application/library targets. The app config owns its development server at http://127.0.0.1:6517. The library config owns its pack entry and declaration settings.
 
-Verify changes from the root with `vp run verify`. Its `pack-lib` prerequisite runs `vp pack` before `verify` runs `vp build`, `vp check` and `vp test`. Use `vp run --last-details` to inspect the cache results for all four steps. The 14 business tests live in `packages/favorites-lib/src/index.test.ts`. Preserve the favorites limit and existing assertions. Session data is illustrative, not the official conference schedule.
+Verify changes from the root with `vp run verify`. Its `packLib` prerequisite runs `vp pack` before `verify` runs `vp build`, `vp check` and `vp test`. Use `vp run --last-details` to inspect the cache results for all four steps. The 14 business tests live in `packages/favorites-lib/src/index.test.ts`. Preserve the favorites limit and existing assertions. Session data is illustrative, not the official conference schedule.
 
 ## Configuration migration references
 

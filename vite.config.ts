@@ -23,11 +23,11 @@ export default defineConfig({
   },
   run: {
     tasks: {
-      "pack-lib": {
+      packLib: {
         command: "vp pack",
       },
       verify: {
-        dependsOn: ["pack-lib"],
+        dependsOn: ["packLib"],
         command: "vp build && vp check && vp test",
       },
     },
