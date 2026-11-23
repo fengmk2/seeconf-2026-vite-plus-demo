@@ -40,13 +40,7 @@ vp build
 vp pack
 ```
 
-预期 14 个测试通过，应用产物位于 `apps/agenda-web/dist/`，库产物为 `packages/favorites-lib/dist/index.mjs` 与 `index.d.mts`。要验证其他项目能否导入打包后的库，在根目录执行：
-
-```sh
-vp run smoke-lib
-```
-
-`smoke-lib` 在 `dependsOn` 中声明了 `pack-lib`。Vite+ 先运行 `vp pack`，再让 Node.js 从 `dist/index.mjs` 导入并调用 `toggleFavorite`。验证通过后输出 `{ ids: [ 'toolchain' ], status: 'added' }`。
+预期 14 个测试通过，应用产物位于 `apps/agenda-web/dist/`，库产物为 `packages/favorites-lib/dist/index.mjs` 与 `index.d.mts`。
 
 ## 一份共享配置，一个验证入口
 
@@ -58,7 +52,7 @@ vp run verify
 vp run --last-details
 ```
 
-`verify` 先构建应用、打包库，再做静态检查和测试。Vite+ 自动追踪各命令读取的输入和写出的产物。输入和执行条件相同时，命中缓存会回放输出，并能还原缺失的构建产物。本例无需配置 `cache.input` 或 `cache.output`。
+`verify` 通过 `dependsOn: ["pack-lib"]` 声明前置任务。运行 `vp run verify` 时，Vite+ 先打包共享库，再依次构建应用、检查代码、运行测试。Vite+ 自动追踪每一步读取的输入和写出的产物。输入和执行条件相同时，缓存可以回放日志、还原缺失的产物。本例无需配置 `cache.input` 或 `cache.output`。
 
 ## 配置迁移：四份文件到一份
 

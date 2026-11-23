@@ -91,9 +91,9 @@ vp run verify
 vp run --last-details
 ```
 
-根配置中的 `verify` 先运行 `vp build` 和 `vp pack`，再运行 `vp check` 和 `vp test`。这样检查和测试第一次扫描 workspace 时，生成目录已经存在。在输入和相关执行条件没有变化时，再次运行可以复用任务缓存；查看执行详情确认是否命中及原因。第三次只改 `apps/agenda-web/index.html` 的标题。应用构建和静态检查重新执行，库打包和业务测试命中缓存。实际耗时取决于机器、项目与缓存状态。
+打开根 `vite.config.ts`，指出 `verify` 声明了 `dependsOn: ["pack-lib"]`。一次 `vp run verify` 会先执行前置任务 `vp pack`，成功后再依次执行 `vp build`、`vp check` 和 `vp test`。
 
-要单独观察任务依赖，运行 `vp run smoke-lib`。`dependsOn: ["pack-lib"]` 让 Vite+ 先打包共享库，再运行 `node scripts/smoke-lib.mjs`。脚本导入 `dist/index.mjs`，断言一次收藏操作的结果。
+第一次运行后，原样再跑一次，观察四个步骤的缓存命中。第三次只改 `apps/agenda-web/index.html` 的标题，再运行 `vp run verify`。`vp run --last-details` 会列出各步骤的结果：应用构建和代码检查重跑，库打包和业务测试命中。
 
 `vp run` 自动追踪命令读写的文件。打包任务自己写出了 `dist/` 中的全部文件，所以即使工具先读取目录来清理旧产物，也无需手动配置 `cache.input` 排除 `dist/`。[自动追踪文档](https://viteplus.dev/guide/automatic-data-tracking)
 

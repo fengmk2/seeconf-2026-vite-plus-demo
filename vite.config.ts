@@ -23,15 +23,12 @@ export default defineConfig({
   },
   run: {
     tasks: {
-      verify: {
-        command: "vp build && vp pack && vp check && vp test",
-      },
       "pack-lib": {
         command: "vp pack",
       },
-      "smoke-lib": {
+      verify: {
         dependsOn: ["pack-lib"],
-        command: "node scripts/smoke-lib.mjs",
+        command: "vp build && vp check && vp test",
       },
     },
   },
